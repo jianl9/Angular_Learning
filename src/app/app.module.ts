@@ -11,6 +11,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { DishdetailComponent } from './dishdetail/dishdetail.component';
+import {MatListModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { DishdetailComponent } from './dishdetail/dishdetail.component';
     FlexLayoutModule,
     MatGridListModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
