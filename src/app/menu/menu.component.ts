@@ -11,7 +11,8 @@ import {DishService} from '../services/dish.service';
 
 export class MenuComponent implements OnInit {
 
-  dishes: Dish[] = DISHES;
+  // dishes: Dish[] = DISHES; // assign dishes info into variable;
+  dishes: Dish[];
 
   selectedDish: Dish;
 
@@ -19,7 +20,7 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dishes = this.dishService.getDishes();
+    this.dishes = this.dishService.getDishes(); // fetch dishes info and assign into variable
   }
 
   onSelect(dish: Dish) {
