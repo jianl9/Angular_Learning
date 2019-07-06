@@ -4,7 +4,6 @@ import { PROMOTIONS } from '../shared/promotions';
 
 @Injectable({
   providedIn: 'root'
-
 })
 
 export class PromotionService {

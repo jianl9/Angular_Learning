@@ -1,0 +1,14 @@
+img {
+  height: 60px;
+  border-radius: 50%;
+  float: left;
+  position: absolute;
+}
+
+p {
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  left: 8%;
+}
