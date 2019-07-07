@@ -18,7 +18,7 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dishes = this.dishService.getDishes(); // fetch dishes info and assign into variable
+    this.dishService.getDishes().then(dishes => this.dishes = dishes); // fetch dishes info and assign into variable
   }
 
   onSelect(dish: Dish) {
