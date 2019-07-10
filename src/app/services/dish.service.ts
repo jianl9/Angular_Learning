@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Dish } from '../shared/dish';
-import { DISHES } from '../shared/dishes';
 import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl'; // instead of get dishes info from dishes.ts, we gonna download it from server side.
 
 
 @Injectable({
@@ -10,21 +11,24 @@ import { delay } from 'rxjs/operators';
 })
 export class DishService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+  // inject HTTPClient into constructor in order to set up to return the observable to the component
+  // each method below gonna return what it obtains from the HTTP get method which we call the server side.
 
   getDishes(): Observable<Dish[]> {
-    return of(DISHES).pipe(delay(500));
+    return this.http.get<Dish[]>(baseURL + 'dishes');
   }
 
-  getDish(id: string): Observable<Dish> {
-    return of(DISHES.filter((dish) => (dish.id === id))[0]).pipe(delay(500));
+  getDish(id: number): Observable<Dish> {
+    return this.http.get<Dish>(baseURL + 'dishes/' + id);
   }
 
   getFeaturedDish(): Observable<Dish> {
-    return of(DISHES.filter((dish) => dish.featured)[0]).pipe(delay(500));
+    return this.http.get<Dish[]>(baseURL + 'dishes?featured=true').pipe(map(dishes => dishes[0]));
+    // query param to filter particular info
   }
 
-  getDishIds(): Observable<string[] | any> {
-    return of(DISHES.map(dish => dish.id )); // return a string array of id
+  getDishIds(): Observable<number[] | any> {
+    return this.getDishes().pipe(map(dishes => dishes.map(dish => dish.id)));
   }
 }
