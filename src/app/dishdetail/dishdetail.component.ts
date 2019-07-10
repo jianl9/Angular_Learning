@@ -24,6 +24,7 @@ export class DishdetailComponent implements OnInit {
   commentForm: FormGroup;
   comment: Comment;
   @ViewChild('cform') commentFormDirective;
+  dishcopy: Dish;
 
   formErrors = {
     'author': '',
@@ -53,9 +54,10 @@ export class DishdetailComponent implements OnInit {
   ngOnInit() { // e.g dishdetail/0; params to get that 0
     this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds); // assign array of id to dishIds
     this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); },
+      .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
         errmess => this.errMess = <any>errmess); // when a dish gets selected, routes changes and we get its id
     // and make it to fetch new dish
+    // dishcopy: anytime dish info is modified in the route paras, also with saving the fish info to this.dish; also save a copy to dishcopy
   }
 
   setPrevNext(dishId: string) { // get prev/next dish index
@@ -105,7 +107,11 @@ export class DishdetailComponent implements OnInit {
     this.comment = this.commentForm.value;
     this.comment['date'] = new Date().toDateString();
     console.log(this.comment);
-    this.dish.comments.push(this.comment);
+    this.dishcopy.comments.push(this.comment); // modify dishcopy instead of dish; let dish waits for the server side being changed
+    this.dishservice.putDish(this.dishcopy).subscribe(dish => {
+      this.dish = dish; this.dishcopy = dish;
+    },
+      errmess => {this.dish = null; this.dishcopy = null; this.errMess = <any>errmess; }); // when the reply from server received
     this.commentForm.reset({
       author: '',
       comment: '',
