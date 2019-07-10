@@ -17,6 +17,7 @@ import { Comment } from '../shared/comment';
 export class DishdetailComponent implements OnInit {
 
   dish: Dish;
+  errMess: string;
   dishIds: string[];
   prev: string;
   next: string;
@@ -52,7 +53,8 @@ export class DishdetailComponent implements OnInit {
   ngOnInit() { // e.g dishdetail/0; params to get that 0
     this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds); // assign array of id to dishIds
     this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); }); // when a dish gets selected, routes changes and we get its id
+      .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); },
+        errmess => this.errMess = <any>errmess); // when a dish gets selected, routes changes and we get its id
     // and make it to fetch new dish
   }
 
