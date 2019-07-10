@@ -1,0 +1,42 @@
+import { trigger, state, style, animate, transition } from '@angular/animations';
+
+export function visibility() { // for reusability
+  return trigger('visibility', [
+    // shown state
+    state('shown', style({
+      transform: 'scale(1.0)',
+      opacity: 1
+    })),
+    // hidden state
+    state('hidden', style({
+      transform: 'scale(0.5)',
+      opacity: 0
+    })),
+    // transition b/w two states
+    transition('* => *', animate('0.5s ease-in-out'))
+  ]);
+}
+
+export function flyInOut() {
+  return trigger('flyInOut', [
+    // * will apply all state; :enter: going to void state to existing state (sth come into the view)
+    state('*', style({ opacity: 1, transform: 'translateX(0)'})),
+    transition(':enter', [
+      style({ transform: 'translateX(-100%)', opacity: 0 }),
+      animate('500ms ease-in')
+    ]),
+    transition(':leave', [
+      animate('500ms ease-out', style({ transform: 'translateX(100%)', opacity: 0}))
+    ])
+  ]);
+}
+
+export function expand() {
+  return trigger('expand', [
+    state('*', style({ opacity: 1, transform: 'translateX(0)' })),
+    transition(':enter', [
+      style({ transform: 'translateY(-50%)', opacity:0 }),
+      animate('200ms ease-in', style({ opacity: 1, transform: 'translateX(0)' }))
+    ])
+  ]);
+}
