@@ -6,12 +6,29 @@ import {DishService} from '../services/dish.service';
 import {count, switchMap} from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Comment } from '../shared/comment';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 
 @Component({
   selector: 'app-dishdetail',
   templateUrl: './dishdetail.component.html',
-  styleUrls: ['./dishdetail.component.scss']
+  styleUrls: ['./dishdetail.component.scss'],
+  animations: [
+    trigger('visibility', [
+      // shown state
+      state('shown', style({
+        transform: 'scale(1.0)',
+        opacity: 1
+      })),
+      // hidden state
+      state('hidden', style({
+        transform: 'scale(0.5)',
+        opacity: 0
+      })),
+      // transition b/w two states
+      transition('* => *', animate('0.5s ease-in-out'))
+    ])
+  ]
 })
 
 export class DishdetailComponent implements OnInit {
@@ -25,6 +42,7 @@ export class DishdetailComponent implements OnInit {
   comment: Comment;
   @ViewChild('cform') commentFormDirective;
   dishcopy: Dish;
+  visibility = 'shown';
 
   formErrors = {
     'author': '',
@@ -48,16 +66,18 @@ export class DishdetailComponent implements OnInit {
               private location: Location,
               private cf: FormBuilder,
               @Inject('BaseURL') private BaseURL) {
-    this.createForm();
   }
 
   ngOnInit() { // e.g dishdetail/0; params to get that 0
-    this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds); // assign array of id to dishIds
-    this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-      .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); },
+    this.createForm();
+    this.dishservice.getDishIds()
+      .subscribe(dishIds => this.dishIds = dishIds); // assign array of id to dishIds
+    this.route.params.pipe(switchMap((params: Params) => {this.visibility = 'hidden'; return this.dishservice.getDish(params['id']); }))
+      .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); this.visibility = 'shown'; },
         errmess => this.errMess = <any>errmess); // when a dish gets selected, routes changes and we get its id
     // and make it to fetch new dish
     // dishcopy: anytime dish info is modified in the route paras, also with saving the fish info to this.dish; also save a copy to dishcopy
+    // visibility: whenever route.param changes, it first hide current dish and show new dish
   }
 
   setPrevNext(dishId: string) { // get prev/next dish index

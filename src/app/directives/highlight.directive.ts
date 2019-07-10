@@ -1,7 +1,8 @@
 import { Directive, ElementRef, Renderer2, HostListener  } from '@angular/core';
 
 @Directive({
-  selector: '[appHighlight]' // wherever I want to use this directive, I will use an attribute called appHighlight whith that particular element in my template
+  selector: '[appHighlight]'
+  // wherever I want to use this directive, I will use an attribute called appHighlight whith that particular element in my template
 })
 export class HighlightDirective {
 
