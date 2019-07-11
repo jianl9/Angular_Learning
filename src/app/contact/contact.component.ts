@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import {expand, flyInOut} from '../animations/app.animation';
+import {expand, flyInOut, visibility} from '../animations/app.animation';
+import {FeedbackService} from '../services/feedback.service';
 
 @Component({
   selector: 'app-contact',
@@ -13,8 +14,8 @@ import {expand, flyInOut} from '../animations/app.animation';
     'style': 'display: block;'
   },
   animations: [
-    flyInOut(), expand()
-  ]
+    flyInOut(), expand(), visibility()
+  ],
 })
 export class ContactComponent implements OnInit {
 
@@ -22,6 +23,10 @@ export class ContactComponent implements OnInit {
   feedback: Feedback;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
+  errMess: string;
+  flgLoader: boolean;
+  flgPreview: boolean;
+  visibility = 'hidden';
 
   formErrors = {
     'firstname': '',
@@ -51,11 +56,14 @@ export class ContactComponent implements OnInit {
     },
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private fbService: FeedbackService) {
     this.createForm();
   }
 
   ngOnInit() {
+    this.flgLoader = false;
+    this.flgPreview = false;
   }
 
   createForm() {
@@ -94,10 +102,16 @@ export class ContactComponent implements OnInit {
     }
   }
 
-
   onSubmit() {
+    this.flgLoader = true;
+    this.flgPreview = true;
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
+    this.fbService.submitFeedback(this.feedback).subscribe(feedback => {
+        this.visibility = 'shown'; this.feedback = feedback; this.flgLoader = false;
+        setTimeout(() => {this.visibility = 'hidden'; this.flgPreview = false; this.feedback = null; }, 5000);
+    },
+      errmess => {this.feedback = null; this.errMess = <any>errmess; });
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
@@ -109,5 +123,4 @@ export class ContactComponent implements OnInit {
     });
     this.feedbackFormDirective.resetForm();
   }
-
 }
